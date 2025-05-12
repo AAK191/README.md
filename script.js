@@ -1,28 +1,35 @@
-// --- Login Logic ---
-const loginForm = document.getElementById('loginForm');
-const loginContainer = document.getElementById('loginContainer');
+// --- User Greeting and Auth Check ---
 const mainContainer = document.getElementById('mainContainer');
+const welcomeDiv = document.getElementById('welcome');
+const logoutBtn = document.getElementById('logoutBtn');
 
-loginForm.addEventListener('submit', function(e) {
-    e.preventDefault();
-    // Simple validation
-    const username = document.getElementById('username').value.trim();
-    const email = document.getElementById('email').value.trim();
-    const password = document.getElementById('password').value.trim();
-    if (username && email && password) {
-        // Hide login, show main
-        loginContainer.style.display = 'none';
-        mainContainer.style.display = 'block';
+function checkLogin() {
+    const user = JSON.parse(sessionStorage.getItem('pomodoroUser'));
+    if (!user) {
+        window.location.href = "auth.html";
     } else {
-        alert('Please fill in all fields.');
+        mainContainer.style.display = "block";
+        if (welcomeDiv) {
+            welcomeDiv.textContent = `Welcome, ${user.username}! (${user.email})`;
+        }
     }
-});
+}
+checkLogin();
+
+if (logoutBtn) {
+    logoutBtn.onclick = function() {
+        sessionStorage.removeItem('pomodoroUser');
+        window.location.href = 'auth.html';
+    };
+}
 
 // --- Pomodoro Logic ---
 const timerText = document.getElementById('timerText');
 const progressCircle = document.getElementById('progressCircle');
 const startBtn = document.getElementById('startBtn');
 const resetBtn = document.getElementById('resetBtn');
+const startSound = document.getElementById('startSound');
+const endSound = document.getElementById('endSound');
 
 let studyDuration = 25; // minutes
 let breakDuration = 5; // minutes
@@ -52,6 +59,7 @@ function startTimer() {
 
     // Notification at start
     showNotification(isStudy ? "Study session started!" : "Break started!");
+    playSound(startSound);
 
     timerInterval = setInterval(() => {
         if (timeLeft > 0) {
@@ -62,6 +70,7 @@ function startTimer() {
             timerInterval = null;
             // Notification at end
             showNotification(isStudy ? "Study session ended! Time for a break." : "Break ended! Back to study.");
+            playSound(endSound);
             // Switch session
             isStudy = !isStudy;
             totalDuration = isStudy ? studyDuration * 60 : breakDuration * 60;
@@ -121,7 +130,7 @@ settingsForm.addEventListener('submit', function(e) {
     }
 });
 
-// --- Notification Logic ---
+// --- Notification and Sound Logic ---
 function showNotification(message) {
     // Try browser notification
     if ("Notification" in window) {
@@ -143,7 +152,15 @@ function showNotification(message) {
     }
 }
 
+function playSound(audioElement) {
+    if (audioElement) {
+        audioElement.currentTime = 0;
+        audioElement.play();
+    }
+}
+
 // Request notification permission on load
 if ("Notification" in window && Notification.permission !== "granted") {
     Notification.requestPermission();
 }
+

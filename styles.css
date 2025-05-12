@@ -68,6 +68,29 @@ body {
     background: linear-gradient(90deg, var(--pastel-blue), var(--pastel-purple));
 }
 
+.tab-switch {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.tab-switch button {
+    background: none;
+    border: none;
+    font-size: 1.1rem;
+    color: var(--pastel-blue);
+    padding: 0.4rem 1.2rem;
+    border-radius: 1rem;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+}
+
+.tab-switch button.active, .tab-switch button:hover {
+    background: var(--pastel-purple);
+    color: #fff;
+}
+
 header {
     display: flex;
     justify-content: space-between;
@@ -81,7 +104,13 @@ header h1 {
     margin: 0;
 }
 
-#settingsBtn {
+#welcome {
+    color: var(--text-light);
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+}
+
+#settingsBtn, #logoutBtn {
     background: none;
     border: none;
     font-size: 2rem;
@@ -90,7 +119,7 @@ header h1 {
     transition: color 0.2s;
 }
 
-#settingsBtn:hover {
+#settingsBtn:hover, #logoutBtn:hover {
     color: var(--pastel-purple);
 }
 

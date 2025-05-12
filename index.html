@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pastel Pomodoro Timer</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Login Section -->
+    <div class="login-container" id="loginContainer">
+        <h2>Sign In</h2>
+        <form id="loginForm">
+            <input type="text" id="username" placeholder="Username" required>
+            <input type="email" id="email" placeholder="Email" required>
+            <input type="password" id="password" placeholder="Password" required>
+            <button type="submit">Sign In</button>
+        </form>
+    </div>
+
+    <!-- Pomodoro Main Section -->
+    <div class="main-container" id="mainContainer" style="display:none;">
+        <header>
+            <h1>Pomodoro Timer</h1>
+            <button id="settingsBtn" title="Settings">&#9881;</button>
+        </header>
+        <div class="timer-section">
+            <div class="circle-timer">
+                <svg width="220" height="220">
+                    <circle cx="110" cy="110" r="100" stroke="#bdb2ff" stroke-width="10" fill="none"/>
+                    <circle id="progressCircle" cx="110" cy="110" r="100" stroke="#a0c4ff" stroke-width="10" fill="none" stroke-linecap="round" />
+                </svg>
+                <div class="timer-text" id="timerText">25:00</div>
+            </div>
+        </div>
+        <div class="controls">
+            <button id="startBtn">Start</button>
+            <button id="resetBtn">Reset</button>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="modal" id="settingsModal">
+        <div class="modal-content">
+            <span class="close" id="closeSettings">&times;</span>
+            <h2>Settings</h2>
+            <form id="settingsForm">
+                <label>Study Duration (minutes):</label>
+                <input type="number" id="studyDuration" min="1" max="120" value="25">
+                <label>Break Duration (minutes):</label>
+                <input type="number" id="breakDuration" min="1" max="60" value="5">
+                <button type="submit">Save</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

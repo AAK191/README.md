@@ -1,20 +1,36 @@
-// --- User Greeting and Auth Check ---
+/ --- User Greeting and Auth Check ---
+// Only allow access if logged in and came from landing page
+const user = JSON.parse(sessionStorage.getItem('pomodoroUser'));
+if (!user) {
+    window.location.href = "auth.html";
+} else if (document.referrer.indexOf('landing.html') === -1) {
+    // Not coming from landing page
+    window.location.href = "landing.html";
+}
+
 const mainContainer = document.getElementById('mainContainer');
 const welcomeDiv = document.getElementById('welcome');
 const logoutBtn = document.getElementById('logoutBtn');
 
-function checkLogin() {
-    const user = JSON.parse(sessionStorage.getItem('pomodoroUser'));
-    if (!user) {
-        window.location.href = "auth.html";
-    } else {
-        mainContainer.style.display = "block";
-        if (welcomeDiv) {
-            welcomeDiv.textContent = `Welcome, ${user.username}! (${user.email})`;
-        }
-    }
-}
-checkLogin();
+//function checkLogin() {
+  //  const user = JSON.parse(sessionStorage.getItem('pomodoroUser'));
+    //if (!user) {
+      //  window.location.href = "auth.html";
+    //} else {
+      //  mainContainer.style.display = "block";
+        //if (welcomeDiv) {
+          //  welcomeDiv.textContent = `Welcome, ${user.username}! (${user.email})`;
+        //}
+    //}
+//}
+//checkLogin();
+//function handleSuccessfulLogin(userData) {
+  //sessionStorage.setItem('pomodoroUser', JSON.stringify(userData));
+  //window.location.href = 'pomodoro.html'; // Redirect to your Pomodoro timer page
+  ////if (goToPomodoroBtn){
+     // goToPomodoroBtn.style.display='block';
+  //}
+//}
 
 if (logoutBtn) {
     logoutBtn.onclick = function() {
@@ -28,6 +44,7 @@ const timerText = document.getElementById('timerText');
 const progressCircle = document.getElementById('progressCircle');
 const startBtn = document.getElementById('startBtn');
 const resetBtn = document.getElementById('resetBtn');
+const pausebtn =document.getElementById('pauseBtn')
 const startSound = document.getElementById('startSound');
 const endSound = document.getElementById('endSound');
 
@@ -53,6 +70,35 @@ function updateTimerDisplay() {
     const progress = timeLeft / totalDuration;
     progressCircle.style.strokeDashoffset = circumference * (1 - progress);
 }
+function playSound(audioElement){
+    if(audioElement){
+        audioElement.currentTime=0;
+        audioElement.play();
+    }
+}
+
+// --- Notification and Sound Logic ---
+function showNotification(message) {
+    // Try browser notification
+    if ("Notification" in window) {
+        if (Notification.permission === "granted") {
+            new Notification(message);
+        } else if (Notification.permission !== "denied") {
+            Notification.requestPermission().then(permission => {
+                if (permission === "granted") {
+                    new Notification(message);
+                } else {
+                    alert(message);
+                }
+            });
+        } else {
+            alert(message);
+        }
+    } else {
+        alert(message);
+    }
+}
+
 
 function startTimer() {
     if (timerInterval) return;
@@ -78,6 +124,14 @@ function startTimer() {
             updateTimerDisplay();
         }
     }, 1000);
+}
+function pauseTimer(){
+    if(yimerInterval){
+
+clearInterval(timerInterval);
+    timerInterval =null;
+    isPaused =true;
+    }
 }
 
 function resetTimer() {
@@ -130,27 +184,6 @@ settingsForm.addEventListener('submit', function(e) {
     }
 });
 
-// --- Notification and Sound Logic ---
-function showNotification(message) {
-    // Try browser notification
-    if ("Notification" in window) {
-        if (Notification.permission === "granted") {
-            new Notification(message);
-        } else if (Notification.permission !== "denied") {
-            Notification.requestPermission().then(permission => {
-                if (permission === "granted") {
-                    new Notification(message);
-                } else {
-                    alert(message);
-                }
-            });
-        } else {
-            alert(message);
-        }
-    } else {
-        alert(message);
-    }
-}
 
 function playSound(audioElement) {
     if (audioElement) {
@@ -163,4 +196,73 @@ function playSound(audioElement) {
 if ("Notification" in window && Notification.permission !== "granted") {
     Notification.requestPermission();
 }
+
+const pauseBtn = document.getElementById('pauseBtn');
+
+let isPaused = false;
+
+function startTimer() {
+    if (timerInterval || isPaused) return;
+
+    showNotification(isStudy ? "Study session started!" : "Break started!");
+    playSound(startSound);
+
+    timerInterval = setInterval(() => {
+        if (timeLeft > 0) {
+            timeLeft--;
+            updateTimerDisplay();
+        } else {
+            clearInterval(timerInterval);
+            timerInterval = null;
+            showNotification(isStudy ? "Study session ended! Time for a break." : "Break ended! Back to study.");
+            playSound(endSound);
+            isStudy = !isStudy;
+            totalDuration = isStudy ? studyDuration * 60 : breakDuration * 60;
+            timeLeft = totalDuration;
+            updateTimerDisplay();
+        }
+    }, 1000);
+}
+
+function pauseTimer() {
+    if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+        isPaused = true;
+    }
+}
+
+pauseBtn.addEventListener('click', pauseTimer);
+
+// Optionally, allow resuming after pause with Start
+startBtn.addEventListener('click', function() {
+    if (isPaused) {
+        isPaused = false;
+        startTimer();
+    } else {
+        startTimer();
+    }
+});
+
+loginForm.onsubmit = function(e) {
+    e.preventDefault();
+    const email = document.getElementById('loginEmail').value.trim();
+    const password = document.getElementById('loginPassword').value.trim();
+    let users = JSON.parse(localStorage.getItem('pomodoroUsers') || '[]');
+    let user = users.find(u => u.email === email && u.password === password);
+    if (!user) {
+        alert('Invalid credentials.');
+        return;
+    }
+    sessionStorage.setItem('pomodoroUser', JSON.stringify(user));
+    window.location.href = 'landing.html';
+};
+
+
+
+
+
+
+
+
 

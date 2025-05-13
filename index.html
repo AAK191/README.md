@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pastel Pomodoro Timer</title>
+    <title>Pomodoro Timer</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -25,8 +25,10 @@
         </div>
         <div class="controls">
             <button id="startBtn">Start</button>
+            <button id="pauseBtn">Pause</button>
             <button id="resetBtn">Reset</button>
-        </div>
+            
+       </div>
     </div>
 
     <!-- Settings Modal -->
@@ -47,6 +49,9 @@
     <!-- Sound elements (hidden) -->
     <audio id="startSound" src="https://cdn.pixabay.com/audio/2022/07/26/audio_124bfa3c7b.mp3"></audio>
     <audio id="endSound" src="https://cdn.pixabay.com/audio/2022/07/26/audio_124bfa3c7b.mp3"></audio>
+
+    <button id="gotoPomodoroBtn" style="padding:1rem 2rem;font-size:1.2rem;">Go to Pomodoro Timer</button>
+
 
     <script src="script.js"></script>
 </body>
